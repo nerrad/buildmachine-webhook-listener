@@ -16,7 +16,7 @@ class React {
 		$this->_request = $request->get_all();
 
 		switch ( $this->_request->repository->url ) {
-			case "https://events.codebasehq.com/event-espresso/32-core.git" :
+			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
 				$this->_trigger_grunt( 'ee_core' );
 				break;
 
