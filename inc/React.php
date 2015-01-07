@@ -32,7 +32,8 @@ class React {
 		$i = 0;
 
 		foreach ( $this->_request->commits as $commit ) {
-			if ( $commit->author->name == 'EE Devbox Server'  && $i = 0 ) {
+			error_log( print_r( $commit, true ) );
+			if ( $commit->author->email == 'admin@eventespresso.com'  && $i == 0 ) {
 				echo 'Commit likely made by grunt so let\'s not run grunt recursively!';
 				exit();
 			}
