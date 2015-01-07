@@ -30,6 +30,7 @@ class React {
 	protected function _trigger_grunt( $repo ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
 		$i = 0;
+
 		foreach ( $this->_request->commits as $commit ) {
 			if ( $commit->author->name == 'EE Devbox Server'  && $i = 0 ) {
 				echo 'Commit likely made by grunt so let\'s not run grunt recursively!';
@@ -50,13 +51,17 @@ class React {
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				$output =shell_exec( 'cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref );
+				 $output =shell_exec( 'whoami && cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1' );
+				 error_log( print_r( $output, true ) );
 				break;
 
 			default :
 				throw new \Exception( "The type sent to this webhook is not supported yet" );
 
 		}
+
+		echo 'success!';
+		exit();
 	}
 
 
