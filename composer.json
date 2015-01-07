@@ -17,13 +17,12 @@
 			"email": "darren@roughsmootheng.in"
 		}
 	],
-	"require" : {
-		"php" : ">=5.4"
-		"nerrad/Codebase-PHP-Wrapper" : "dev-master"
+	"require": {
+		"php": ">=5.4"
 	},
 	"autoload" : {
-		"psr-4":{
-			"Nerrad\\CodebaseWebhook\\" : "inc/"
+		"psr-4": {
+			"Nerrad\\CodebaseWebhook\\": "inc/"
 		}
 	}
 }
