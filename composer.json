@@ -1,0 +1,29 @@
+{
+	"name": "nerrad/codebase_webhook",
+	"description":"An application for receiving requests from codebasehq (outgoing webhook) and triggering tasks from those requests.",
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/nerrad/codebase_webhook.git"
+		}
+	],
+	"keywords": ["api", "codebase", "webhook"],
+	"type": "application",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Darren Ethier",
+			"homepage": "http://roughsmootheng.in",
+			"email": "darren@roughsmootheng.in"
+		}
+	],
+	"require" : {
+		"php" : ">=5.4"
+		"nerrad/Codebase-PHP-Wrapper" : "dev-master"
+	},
+	"autoload" : {
+		"psr-4":{
+			"Nerrad\\CodebaseWebhook\\" : "inc/"
+		}
+	}
+}
