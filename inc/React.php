@@ -50,7 +50,7 @@ class React {
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				$output =shell_exec( 'cd ~/buildmachine/event-espresso-core && grunt testingbumprc_' . $ref );
+				$output =shell_exec( 'cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref );
 				break;
 
 			default :
