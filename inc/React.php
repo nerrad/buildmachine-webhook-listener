@@ -21,7 +21,7 @@ class React {
 				break;
 
 			default :
-				return 'No tasks to run';
+				echo 'No tasks to run';
 				exit();
 		}
 	}
@@ -29,15 +29,26 @@ class React {
 
 	protected function _trigger_grunt( $repo ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
-		foreach ( $this->commits as $commit ) {
+		foreach ( $this->_request->commits as $commit ) {
 			if ( $commit->author->name == 'EE Devbox Server' ) {
-				return 'Commit likely made by grunt so let\'s not run grunt recursively!';
+				echo 'Commit likely made by grunt so let\'s not run grunt recursively!';
+				exit();
 			}
 		}
+
+		//what branch are we going to checkout?
+		$ref = str_replace( 'refs/heads/', '', $this->_request->ref );
+
+		$expected_refs = array( 'master', 'beta', 'alpha' );
+		if ( ! in_array( $ref, $expected_refs ) ) {
+			echo 'Grunt is only run on master, alpha or beta branches';
+			exit();
+		}
+
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				$output =`cd ~/buildmachine/event-espresso-core && grunt testingbump_rc`;
+				$output =shell_exec( 'cd ~/buildmachine/event-espresso-core && grunt testingbumprc_' . $ref );
 				break;
 
 			default :
