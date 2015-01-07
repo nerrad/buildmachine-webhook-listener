@@ -8,7 +8,7 @@
 namespace Nerrad\CodebaseWebhook;
 require 'vendor/autoload.php';
 
-use Nerrad\Codebase\Http\Request;
+use Nerrad\CodebaseWebhook\Http\Request;
 
 define( 'CB_WEBHOOK_BASE_PATH', dirname( __FILE__ ) );
 
