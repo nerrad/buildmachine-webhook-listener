@@ -29,11 +29,13 @@ class React {
 
 	protected function _trigger_grunt( $repo ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
+		$i = 0;
 		foreach ( $this->_request->commits as $commit ) {
-			if ( $commit->author->name == 'EE Devbox Server' ) {
+			if ( $commit->author->name == 'EE Devbox Server'  && $i = 0 ) {
 				echo 'Commit likely made by grunt so let\'s not run grunt recursively!';
 				exit();
 			}
+			$i++;
 		}
 
 		//what branch are we going to checkout?
