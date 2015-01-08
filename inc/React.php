@@ -12,7 +12,7 @@ class React {
 
 	public function __construct( Request $request ) {
 		//keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that we have a non EE4server request for triggering grunt.
-
+		ini_set( 'log_errors_max_len', 0 );
 		$this->_request = $request->get_all();
 
 		switch ( $this->_request->repository->url ) {
@@ -30,6 +30,11 @@ class React {
 	protected function _trigger_grunt( $repo ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
 		$i = 0;
+
+		if ( empty( $this->_request ) || ! isset( $this->_request->commits ) ) {
+			echo 'no commits to process';
+			exit();
+		}
 
 		foreach ( $this->_request->commits as $commit ) {
 			error_log( print_r( $commit, true ) );
