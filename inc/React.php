@@ -19,6 +19,9 @@ class React {
 			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
 				$this->_trigger_grunt( 'ee_core' );
 				break;
+			case "https://events.codebasehq.com/projects/event-espresso/repositories/eea-barcode-scanning" :
+				$this->_trigger_grunt( 'eea_barcode_scanner' );
+				break;
 
 			default :
 				echo 'No tasks to run';
@@ -58,6 +61,13 @@ class React {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
 				 $output =shell_exec( 'whoami && cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1' );
+				 //let's output to syslog
+				 syslog( LOG_DEBUG, print_r( $output, true ) );
+				break;
+
+			case 'eea_barcode_scanner' :
+				//attempt to navigate to grunt folder and run task!
+				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea_barcode_scanner && grunt bumprc_' . $ref . ' 2>&1' );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
 				break;
