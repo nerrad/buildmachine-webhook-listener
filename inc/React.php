@@ -58,7 +58,8 @@ class React {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
 				 $output =shell_exec( 'whoami && cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1' );
-				 error_log( print_r( $output, true ) );
+				 //let's output to syslog
+				 syslog( LOG_DEBUG, print_r( $output, true ) );
 				break;
 
 			default :
