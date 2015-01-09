@@ -67,7 +67,7 @@ class React {
 
 			case 'eea_barcode_scanner' :
 				//attempt to navigate to grunt folder and run task!
-				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea_barcode_scanner && grunt bumprc_' . $ref . ' 2>&1' );
+				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea-barcode-scanner && grunt bumprc_' . $ref . ' 2>&1' );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
 				break;
