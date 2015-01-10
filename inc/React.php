@@ -64,7 +64,7 @@ class React {
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
 				 sleep(4); //give some time for the above to finish!
-				 exec( 'cd ~/buildmachine/event-espresso-core && grunt updateSandbox_' . $ref . '2>&1', $output2 );
+				 exec( 'cd ~/buildmachine/event-espresso-core && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
 				 syslog( LOG_DEBUG, print_r( $output2 ) );
 				break;
 
