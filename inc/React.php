@@ -86,11 +86,4 @@ class React {
 	}
 
 
-
-
-	protected function start_script( $path ) {
-		$curl = curl_init(  )
-	}
-
-
 } //end React
