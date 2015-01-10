@@ -64,7 +64,7 @@ class React {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
 				$script =  'hooks/event-espresso-core/grunt-' . $ref . '-start.sh';
-				$this->start_sript( $script );
+				$this->start_script( $script );
 				break;
 
 			case 'eea_barcode_scanner' :
