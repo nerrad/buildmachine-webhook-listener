@@ -64,7 +64,7 @@ class React {
 				 exec( 'cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1', $output );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
-				 sleep(4); //give some time for the above to finish!
+				 sleep(3); //give some time for the above to finish!
 				 exec( 'cd ~/buildmachine/event-espresso-core && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
 				 syslog( LOG_DEBUG, print_r( $output2 ) );
 				break;
@@ -74,7 +74,7 @@ class React {
 				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea-barcode-scanner && grunt bumprc_' . $ref . ' 2>&1' );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
-				  sleep(4); //give some time for the above to finish!
+				  sleep(3); //give some time for the above to finish!
 				 exec( 'cd ~/buildmachine/eea-barcode-scanner && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
 				 syslog( LOG_DEBUG, print_r( $output2 ) );
 				break;
