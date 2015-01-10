@@ -5,46 +5,69 @@
 namespace Nerrad\CodebaseWebhook;
 
 use Nerrad\CodebaseWebhook\Http\Request;
+use Nerrad\CodebaseWebhook\Config
 
 class React {
 
 	private $_request;
+	private $_config;
 
 	public function __construct( Request $request ) {
 		//keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that we have a non EE4server request for triggering grunt.
 		ini_set( 'log_errors_max_len', 0 );
 		$this->_request = $request->get_all();
+		$this->_config = Config::instance();
 
-		switch ( $this->_request->repository->url ) {
-			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
-				$this->_trigger_grunt( 'ee_core' );
-				break;
-			case "https://events.codebasehq.com/projects/event-espresso/repositories/eea-barcode-scanning" :
-				$this->_trigger_grunt( 'eea_barcode_scanner' );
-				break;
+		//verify we have a valid request
+		if ( empty( $this->_request->repository ) ) {
+			header( 'HTTP/1.1 400 Bad Request' );
+			$msg = 'Invalid package received.';
+			syslog( LOG_DEBUG, $msg );
+			exit( $msg );
+		}
 
-			default :
-				echo 'No tasks to run';
-				exit();
+		$has_run = false;
+		foreach ( $this->_config->map as $url => $slug ) {
+			if ( $url == $this->_request->repository->url ) {
+				$this->_trigger_grunt( $slug );
+				$has_run = true;
+			}
+		}
+		//message about no support
+		if ( $has_run ) {
+			header( 'HTTP/1.1 200 OK' );
+			$msg = 'The grunt tasks associated with ' . $this->_request->repository->url . ' completed successfully.';
+			syslog( LOG_DEBUG, $msg );
+			exit( $msg );
+
+		} else {
+			header( 'HTTP/1.1 200 OK' );
+			$msg = 'There are no grunt tasks associated with ' . $this->_request->repository->url '.';
+			syslog( LOG_DEBUG, $msg );
+			exit( $msg );
 		}
 	}
 
 
-	protected function _trigger_grunt( $repo ) {
+	protected function _trigger_grunt( $slug ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
 		$i = 0;
 		$output = $output2 = '';
 
 		if ( empty( $this->_request ) || ! isset( $this->_request->commits ) ) {
-			echo 'no commits to process';
-			exit();
+			header( 'HTTP/1.1 400 Bad Request')
+			$msg = 'No commits to process.  Looks like a bad package.';
+			syslog( LOG_DEBUG, $msg );
+			exit( $msg );
 		}
 
 		foreach ( $this->_request->commits as $commit ) {
 			//error_log( print_r( $commit, true ) );
-			if ( $commit->author->email == 'admin@eventespresso.com'  && $i == 0 ) {
-				echo 'Commit likely made by grunt so let\'s not run grunt recursively!';
-				exit();
+			if ( $commit->author->email == $this->_config->server_git_email && $i == 0 ) {
+				header( 'HTTP/1.1 202 Accepted')
+				$msg = 'Most recent commit made by grunt so will not run recursively!';
+				syslog( LOG_DEBUG, $msg );
+				exit( $msg );
 			}
 			$i++;
 		}
@@ -54,38 +77,27 @@ class React {
 
 		$expected_refs = array( 'master', 'beta', 'alpha' );
 		if ( ! in_array( $ref, $expected_refs ) ) {
-			echo 'Grunt is only run on master, alpha or beta branches';
-			exit();
+			header( 'HTTP/1.1 202 Accepted')
+			$msg = 'Grunt is only run on master, alpha or beta branches. The ref in the package does not match one of those branches.';
+			syslog( LOG_DEBUG, $msg );
+			exit( $msg );
 		}
 
-		switch ( $repo ) {
-			case 'ee_core' :
-				//attempt to navigate to grunt folder and run task!
-				 exec( 'cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1', $output );
-				 //let's output to syslog
-				 syslog( LOG_DEBUG, print_r( $output, true ) );
-				 sleep(3); //give some time for the above to finish!
-				 exec( 'cd ~/buildmachine/event-espresso-core && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
-				 syslog( LOG_DEBUG, print_r( $output2 ) );
-				break;
+		$this->_do_grunt( $slug, $ref );
+	}
 
-			case 'eea_barcode_scanner' :
-				//attempt to navigate to grunt folder and run task!
-				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea-barcode-scanner && grunt bumprc_' . $ref . ' 2>&1' );
-				 //let's output to syslog
-				 syslog( LOG_DEBUG, print_r( $output, true ) );
-				  sleep(3); //give some time for the above to finish!
-				 exec( 'cd ~/buildmachine/eea-barcode-scanner && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
-				 syslog( LOG_DEBUG, print_r( $output2 ) );
-				break;
 
-			default :
-				throw new \Exception( "The type sent to this webhook is not supported yet" );
+	protected function do_grunt( $slug, $ref ) {
+		$output = $output2 = '';
+		$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && grunt bumprc_' . $ref . ' 2>&1';
+		$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && grunt updateSandbox_' . $ref . ' 2>&1';
+		exec( $bump_command, $output );
+		syslog( LOG_DEBUG, print_r( $output, true ) );
 
-		}
+		sleep(3);
 
-		echo 'success!';
-		exit();
+		exec( $sandbox_command, $output2 );
+		syslog( LOG_DEBUG, print_r( $output2, true ) );
 	}
 
 
