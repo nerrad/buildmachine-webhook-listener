@@ -60,7 +60,8 @@ class React {
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				 $output =shell_exec( 'whoami && cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1' );
+				$bash = CB_WEBHOOK_BASE_PATH . '/hooks/event-espresso-core/grunt-' . $ref . '-start.sh';
+				exec( 'sh ' . $bash, $output );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
 				break;
