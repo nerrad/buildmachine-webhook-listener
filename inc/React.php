@@ -5,15 +5,18 @@
 namespace Nerrad\CodebaseWebhook;
 
 use Nerrad\CodebaseWebhook\Http\Request;
+use Nerrad\Codebase\Config;
 
 class React {
 
 	private $_request;
+	private $_config;
 
 	public function __construct( Request $request ) {
 		//keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that we have a non EE4server request for triggering grunt.
 		ini_set( 'log_errors_max_len', 0 );
 		$this->_request = $request->get_all();
+		$this->_config = Config::instance();
 
 		switch ( $this->_request->repository->url ) {
 			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
@@ -60,10 +63,8 @@ class React {
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				$bash = CB_WEBHOOK_BASE_PATH . '/hooks/event-espresso-core/grunt-' . $ref . '-start.sh';
-				exec( 'sh ' . $bash, $output );
-				 //let's output to syslog
-				 syslog( LOG_DEBUG, print_r( $output, true ) );
+				$script =  'hooks/event-espresso-core/grunt-' . $ref . '-start.sh';
+				$this->start_sript( $script );
 				break;
 
 			case 'eea_barcode_scanner' :
@@ -79,6 +80,24 @@ class React {
 		}
 
 		echo 'success!';
+		exit();
+	}
+
+
+
+
+	protected function start_script( $path ) {
+		$curl = curl_init(  $this->_config->baseurl . $path );
+		curl_setopt( $curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+		curl_setopt_array( $curl, array(
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_CONNECTTIMEOUT => 60,
+			CURLOPT_TIMEOUT => 120,
+			CURLOPT_USERPWD => $this->_config->username . ':' . $this->_config->password
+			));
+		$curl_response = curl_exec( $curl );
+		curl_close( $curl );
+		syslog( LOG_DEBUG, $curl_response );
 		exit();
 	}
 

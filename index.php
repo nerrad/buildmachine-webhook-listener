@@ -7,6 +7,7 @@
 
 namespace Nerrad\CodebaseWebhook;
 require 'vendor/autoload.php';
+require 'configuration.php';
 
 use Nerrad\CodebaseWebhook\Http\Request;
 
