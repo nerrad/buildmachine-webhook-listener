@@ -5,18 +5,15 @@
 namespace Nerrad\CodebaseWebhook;
 
 use Nerrad\CodebaseWebhook\Http\Request;
-use Nerrad\CodebaseWebhook\Config;
 
 class React {
 
 	private $_request;
-	private $_config;
 
 	public function __construct( Request $request ) {
 		//keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that we have a non EE4server request for triggering grunt.
 		ini_set( 'log_errors_max_len', 0 );
 		$this->_request = $request->get_all();
-		$this->_config = Config::instance();
 
 		switch ( $this->_request->repository->url ) {
 			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
@@ -63,10 +60,11 @@ class React {
 		switch ( $repo ) {
 			case 'ee_core' :
 				//attempt to navigate to grunt folder and run task!
-				$bash = CB_WEBHOOK_BASE_PATH . '/hooks/event-espresso-core/grunt-' . $ref . '-start.sh';
-				exec( 'sh ' . $bash, $output );
+				 exec( 'cd ~/buildmachine/event-espresso-core && grunt bumprc_' . $ref . ' 2>&1', $output );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
+				 exec( 'cd !/buildmachine/event-espresso-core && grunt updateSandbox_' . $ref . '2>&1', $$output2 );
+				 syslog( LOG_DEBUG, print_r( $output2 ) );
 				break;
 
 			case 'eea_barcode_scanner' :
