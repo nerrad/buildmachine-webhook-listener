@@ -33,6 +33,7 @@ class React {
 	protected function _trigger_grunt( $repo ) {
 		//if latest commit by EE DevBox server then do NOT run grunt
 		$i = 0;
+		$output = $output2 = '';
 
 		if ( empty( $this->_request ) || ! isset( $this->_request->commits ) ) {
 			echo 'no commits to process';
@@ -73,6 +74,9 @@ class React {
 				 $output =shell_exec( 'whoami && cd ~/buildmachine/eea-barcode-scanner && grunt bumprc_' . $ref . ' 2>&1' );
 				 //let's output to syslog
 				 syslog( LOG_DEBUG, print_r( $output, true ) );
+				  sleep(4); //give some time for the above to finish!
+				 exec( 'cd ~/buildmachine/eea-barcode-scanner && grunt updateSandbox_' . $ref . ' 2>&1', $output2 );
+				 syslog( LOG_DEBUG, print_r( $output2 ) );
 				break;
 
 			default :
