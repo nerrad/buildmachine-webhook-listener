@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd /home/eeliveadmin/buildmachine/event-espresso-core
-grunt bumprc_alpha --verbose
+grunt bumprc_alpha
