@@ -16,7 +16,7 @@ class React {
 		//keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that we have a non EE4server request for triggering grunt.
 		ini_set( 'log_errors_max_len', 0 );
 		$this->_request = $request->get_all();
-		$this->_config = Config::instance()
+		$this->_config = Config::instance();
 
 		switch ( $this->_request->repository->url ) {
 			case "https://events.codebasehq.com/projects/event-espresso/repositories/32-core" :
