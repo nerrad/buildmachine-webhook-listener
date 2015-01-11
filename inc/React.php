@@ -5,7 +5,7 @@
 namespace Nerrad\CodebaseWebhook;
 
 use Nerrad\CodebaseWebhook\Http\Request;
-use Nerrad\CodebaseWebhook\Config
+use Nerrad\CodebaseWebhook\Config;
 
 class React {
 
