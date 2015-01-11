@@ -87,7 +87,7 @@ class React {
 	}
 
 
-	protected function do_grunt( $slug, $ref ) {
+	protected function _do_grunt( $slug, $ref ) {
 		$output = $output2 = '';
 		$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && grunt bumprc_' . $ref . ' 2>&1';
 		$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && grunt updateSandbox_' . $ref . ' 2>&1';
