@@ -20,9 +20,9 @@ class React {
 
 		//verify we have a valid request
 		if ( empty( $this->_request->repository ) ) {
-			header( 'HTTP/1.1 400 Bad Request' );
 			$msg = 'Invalid package received.';
 			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 400 Bad Request' );
 			exit( $msg );
 		}
 
@@ -35,15 +35,15 @@ class React {
 		}
 		//message about no support
 		if ( $has_run ) {
-			header( 'HTTP/1.1 200 OK' );
 			$msg = 'The grunt tasks associated with ' . $this->_request->repository->url . ' completed successfully.';
 			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 200 OK' );
 			exit( $msg );
 
 		} else {
-			header( 'HTTP/1.1 200 OK' );
 			$msg = 'There are no grunt tasks associated with ' . $this->_request->repository->url '.';
 			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 200 OK' );
 			exit( $msg );
 		}
 	}
@@ -55,18 +55,18 @@ class React {
 		$output = $output2 = '';
 
 		if ( empty( $this->_request ) || ! isset( $this->_request->commits ) ) {
-			header( 'HTTP/1.1 400 Bad Request')
 			$msg = 'No commits to process.  Looks like a bad package.';
 			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 400 Bad Request')
 			exit( $msg );
 		}
 
 		foreach ( $this->_request->commits as $commit ) {
 			//error_log( print_r( $commit, true ) );
 			if ( $commit->author->email == $this->_config->server_git_email && $i == 0 ) {
-				header( 'HTTP/1.1 202 Accepted')
 				$msg = 'Most recent commit made by grunt so will not run recursively!';
 				syslog( LOG_DEBUG, $msg );
+				header( 'HTTP/1.1 202 Accepted')
 				exit( $msg );
 			}
 			$i++;
@@ -77,9 +77,9 @@ class React {
 
 		$expected_refs = array( 'master', 'beta', 'alpha' );
 		if ( ! in_array( $ref, $expected_refs ) ) {
-			header( 'HTTP/1.1 202 Accepted')
 			$msg = 'Grunt is only run on master, alpha or beta branches. The ref in the package does not match one of those branches.';
 			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 202 Accepted')
 			exit( $msg );
 		}
 
