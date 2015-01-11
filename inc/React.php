@@ -57,7 +57,7 @@ class React {
 		if ( empty( $this->_request ) || ! isset( $this->_request->commits ) ) {
 			$msg = 'No commits to process.  Looks like a bad package.';
 			syslog( LOG_DEBUG, $msg );
-			header( 'HTTP/1.1 400 Bad Request')
+			header( 'HTTP/1.1 400 Bad Request');
 			exit( $msg );
 		}
 
@@ -66,7 +66,7 @@ class React {
 			if ( $commit->author->email == $this->_config->server_git_email && $i == 0 ) {
 				$msg = 'Most recent commit made by grunt so will not run recursively!';
 				syslog( LOG_DEBUG, $msg );
-				header( 'HTTP/1.1 202 Accepted')
+				header( 'HTTP/1.1 202 Accepted');
 				exit( $msg );
 			}
 			$i++;
@@ -79,7 +79,7 @@ class React {
 		if ( ! in_array( $ref, $expected_refs ) ) {
 			$msg = 'Grunt is only run on master, alpha or beta branches. The ref in the package does not match one of those branches.';
 			syslog( LOG_DEBUG, $msg );
-			header( 'HTTP/1.1 202 Accepted')
+			header( 'HTTP/1.1 202 Accepted');
 			exit( $msg );
 		}
 
