@@ -41,7 +41,7 @@ class React {
 			exit( $msg );
 
 		} else {
-			$msg = 'There are no grunt tasks associated with ' . $this->_request->repository->url '.';
+			$msg = 'There are no grunt tasks associated with ' . $this->_request->repository->url . '.';
 			syslog( LOG_DEBUG, $msg );
 			header( 'HTTP/1.1 200 OK' );
 			exit( $msg );
