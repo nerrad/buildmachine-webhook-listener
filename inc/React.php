@@ -89,8 +89,8 @@ class React {
 
 	protected function _do_grunt( $slug, $ref ) {
 		$output = $output2 = '';
-		$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref . ' 2>&1';
-		$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref . ' 2>&1';
+		$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref;
+		$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref;
 		exec( $bump_command, $output );
 		syslog( LOG_DEBUG, print_r( $output, true ) );
 
