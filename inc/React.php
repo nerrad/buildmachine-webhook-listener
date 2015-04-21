@@ -75,29 +75,37 @@ class React {
 		//what branch are we going to checkout?
 		$ref = str_replace( 'refs/heads/', '', $this->_request->ref );
 
-		$expected_refs = array( 'master', 'beta', 'alpha' );
+		//commented out below because we're now accepting all branches but just doing an update on github with non master branch.
+		/**$expected_refs = array( 'master', 'beta', 'alpha' );
 		if ( ! in_array( $ref, $expected_refs ) ) {
 			$msg = 'Grunt is only run on master, alpha or beta branches. The ref in the package does not match one of those branches.';
 			syslog( LOG_DEBUG, $msg );
 			header( 'HTTP/1.1 202 Accepted');
 			exit( $msg );
-		}
+		}/**/
+
 
 		$this->_do_grunt( $slug, $ref );
 	}
 
 
 	protected function _do_grunt( $slug, $ref ) {
-		$output = $output2 = '';
-		$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref;
-		$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref;
+		$output = $output2 = $sandbox_command = '';
+		if ( $ref == 'master' ) {
+			$bump_command    = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref;
+			$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref;
+		} else {
+			$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt githubsync';
+		}
 		exec( $bump_command, $output );
 		syslog( LOG_DEBUG, print_r( $output, true ) );
 
-		sleep(3);
+		if ( ! empty( $sandbox_command ) ) {
+			sleep( 3 );
 
-		exec( $sandbox_command, $output2 );
-		syslog( LOG_DEBUG, print_r( $output2, true ) );
+			exec( $sandbox_command, $output2 );
+			syslog( LOG_DEBUG, print_r( $output2, true ) );
+		}
 	}
 
 
