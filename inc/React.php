@@ -95,7 +95,7 @@ class React {
 			$bump_command    = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref;
 			$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref;
 		} else {
-			$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt githubsync';
+			$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt githubsync:' . $ref;
 		}
 		exec( $bump_command, $output );
 		syslog( LOG_DEBUG, print_r( $output, true ) );
