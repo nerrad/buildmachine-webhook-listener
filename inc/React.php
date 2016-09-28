@@ -84,8 +84,49 @@ class React {
 			exit( $msg );
 		}/**/
 
-
-		$this->_do_grunt( $slug, $ref );
+		if ( $this->canProcess( $slug ) ) {
+			$this->setProcessingLock( $slug );
+			$this->_do_grunt( $slug, $ref );
+			$this->removeProcessingLock( $slug );
+		} else {
+			$msg = "There is already a task for the $slug being processed.";
+			syslog( LOG_DEBUG, $msg );
+			header( 'HTTP/1.1 409 Request Conflict');
+			exit( $msg );
+		}
+	}
+	
+	
+	/**
+	 * Determines whether there is a processing lock for the
+	 * @param $slug
+	 */
+	protected function canProcess( $slug ) {
+		$locks = json_decode( file_get_contents( '.locks' ) );
+		return ! isset( $locks->{$slug} );
+	}
+	
+	
+	
+	/**
+	 * Sets the lock for a processing request.
+	 * @param $slug
+	 */
+	protected function setProcessingLock( $slug ) {
+		$locks = json_decode( file_get_contents( '.locks' ) );
+		$locks->{$slug} = true;
+		file_put_contents( '.locks', json_encode( $locks ) );
+	}
+	
+	
+	/**
+	 * Removes the processing lock for a processing request.
+	 * @param $slug
+	 */
+	protected function removeProcessingLock( $slug ) {
+		$locks = json_decode( file_get_contents( '.locks' ) );
+		unset( $locks->{$slug} );
+		file_put_contents( '.locks', json_encode( $locks ) );
 	}
 
 
