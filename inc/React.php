@@ -27,8 +27,8 @@ class React {
 		}
 
 		$has_run = false;
-		foreach ( $this->_config->map as $url => $slug ) {
-			if ( $url == $this->_request->repository->url ) {
+		foreach ( $this->_config->map as $slug => $clone_url ) {
+			if ( $clone_url === $this->_request->repository->clone_url ) {
 				$this->_trigger_grunt( $slug );
 				$has_run = true;
 			}
@@ -133,10 +133,10 @@ class React {
 	protected function _do_grunt( $slug, $ref ) {
 		$output = $output2 = $sandbox_command = '';
 		if ( $ref == 'master' ) {
-			$bump_command    = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt bumprc_' . $ref;
-			$sandbox_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt updateSandbox_' . $ref;
+			$bump_command    = 'cd ' . $this->_config->grunt_path . ' && grunt bumprc_' . $ref . ':' . $slug;
+			$sandbox_command = 'cd ' . $this->_config->grunt_path . ' && grunt updateRemotes:' . $slug;
 		} else {
-			$bump_command = 'cd ' . $this->_config->grunt_path . $slug . ' && unset GIT_DIR && grunt githubsync:' . $ref;
+			$bump_command = 'cd ' . $this->_config->grunt_path . ' && grunt githubsync:' . $slug . ':' . $ref;
 		}
 		exec( $bump_command, $output );
 		syslog( LOG_DEBUG, print_r( $output, true ) );
