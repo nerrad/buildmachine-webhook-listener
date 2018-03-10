@@ -1,28 +1,47 @@
 <?php
+namespace Nerrad\BuildMachine\WebHookListener\Http;
+
+use RuntimeException;
+
 /**
+ * Request
  * Request class for simply receiving the requests
-**/
-namespace Nerrad\CodebaseWebhook\Http;
+ *
+ * @package Nerrad\BuildMachine\WebHookListener\Http
+ * @author  Darren Ethier
+ * @since   1.0.0
+ */
+class Request
+{
 
-class Request {
-
-	private $_req;
-
-
-	public function __construct(  $request ) {
-		if ( ! isset( $request['payload'] ) ) {
-			throw new \Exception( 'Incoming request does not have "payload" param' );
-		}
-		$this->_req = is_array( $request['payload'] ) ?  json_decode( json_encode( $request['payload'] ) ) : json_decode( $request['payload'] );
-	}
+    private $request;
 
 
-	public function get_all() {
-		return $this->_req;
-	}
+    /**
+     * Request constructor.
+     *
+     * @param $request
+     * @throws RuntimeException
+     */
+    public function __construct($request)
+    {
+        if (! isset($request['payload'])) {
+            throw new RuntimeException('Incoming request does not have "payload" param');
+        }
+        $this->request = is_array($request['payload'])
+            ? json_decode(json_encode($request['payload']))
+            : json_decode($request['payload']);
+    }
 
 
-	public function get( $var ) {
-		return isset( $this->_req->$var) ? $this->_req->$var : null;
-	}
+    public function getAll()
+    {
+        return $this->request;
+    }
+
+
+    public function get($var)
+    {
+        return isset($this->request->{$var}) ? $this->request->{$var} : null;
+    }
 }

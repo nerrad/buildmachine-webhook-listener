@@ -1,26 +1,21 @@
 <?php
-/**
- * This is a simple webhook for processing incoming http posts from codebase gith webhooks and triggering actions.
- * Note that you should really ensure that this hook is protected by basic authentication (which you can add to the
- * codebase settings) otherwise there is no protection against running this.
- */
+namespace Nerrad\BuildMachine\WebHookListener;
 
-namespace Nerrad\CodebaseWebhook;
 require 'vendor/autoload.php';
-require 'configuration.php';
 
-use Nerrad\CodebaseWebhook\Http\Request;
+use Exception;
+use Nerrad\BuildMachine\WebHookListener\Http\Request;
 
-define( 'CB_WEBHOOK_BASE_PATH', dirname( __FILE__ ) );
-
-//grab request and assing to React class.
-$request = new Request( $_REQUEST );
+define('CB_WEBHOOK_BASE_PATH', __DIR__ . '/');
 
 //react
 try {
-	$react = new React( $request );
-} catch ( \Exception $e ) {
-	$msg = $e->getMessage();
-	header( $msg, true, 501 );
-	exit();
+    $config = new Config();
+    //grab request and pass to React class.
+    $request = new Request($_REQUEST);
+    new React($request, $config);
+} catch (Exception $e) {
+    $msg = $e->getMessage();
+    header($msg, true, 501);
+    exit();
 }
