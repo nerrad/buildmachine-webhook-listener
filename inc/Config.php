@@ -3,7 +3,7 @@ namespace Nerrad\BuildMachine\WebHookListener;
 
 /**
  * Config
- * Wimply contains the default configuration class for the app.  Note you will need to add all your configuration
+ * Simply contains the default configuration class for the app.  Note you will need to add all your configuration
  * details in the constructor of this class.
  *
  * @package Nerrad\BuildMachine\WebHookListener
@@ -17,6 +17,7 @@ class Config
     public $grunt_path = '';
     public $grunt_src = '';
     public $server_git_email = '';
+    public $repository_type = '';
 
 
     /**
@@ -31,6 +32,7 @@ class Config
         $this->grunt_path = isset($grunt_path) ? $grunt_path : '';
         $this->grunt_src_path = isset($grunt_src_path) ? $grunt_src_path : '';
         $this->server_git_email = isset($server_git_email) ? $server_git_email : '';
+        $this->repository_type = isset($repository_type) ? $repository_type : '';
     }
 
     /**

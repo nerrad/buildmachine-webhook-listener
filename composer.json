@@ -22,7 +22,7 @@
 	},
 	"autoload" : {
 		"psr-4": {
-			"Nerrad\\BuildMachine\\WebhookListener\\": "inc/"
+			"Nerrad\\BuildMachine\\WebHookListener\\": "inc/"
 		}
 	}
 }

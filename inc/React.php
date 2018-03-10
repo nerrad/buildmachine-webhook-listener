@@ -1,7 +1,7 @@
 <?php
 namespace Nerrad\BuildMachine\WebHookListener;
 
-use Nerrad\BuildMachine\WebHookListener\Http\Request;
+use Nerrad\BuildMachine\WebHookListener\Http\RequestInterface;
 
 
 /**
@@ -15,15 +15,22 @@ use Nerrad\BuildMachine\WebHookListener\Http\Request;
 class React
 {
 
+    /**
+     * @var RequestInterface
+     */
     private $request;
+
+    /**
+     * @var Config
+     */
     private $config;
 
-    public function __construct(Request $request, Config $config)
+    public function __construct(RequestInterface $request, Config $config)
     {
         //keeping things simple for the first go.  All we want to do is parse the incoming request and make sure that
         // we have a non EE4server request for triggering grunt.
         ini_set('log_errors_max_len', 0);
-        $this->request = $request->getAll();
+        $this->request = $request;
         $this->config = $config;
 
         $this->validateRequest();
@@ -37,7 +44,7 @@ class React
     private function validateRequest()
     {
         //verify there is a valid access token and it matches our config. Bail if not present
-        $incoming_access_token = $this->request->token;
+        $incoming_access_token = $this->request->token();
         if ($incoming_access_token !== $this->config->access_token && ! empty($this->config->access_token)) {
             $msg = 'Access denied due to invalid token.';
             syslog(LOG_DEBUG, $msg);
@@ -46,7 +53,7 @@ class React
         }
 
         //verify we have a valid request
-        if (empty($this->request->repository)) {
+        if (! $this->request->isValid()) {
             $msg = 'Invalid package received.';
             syslog(LOG_DEBUG, $msg);
             header('HTTP/1.1 400 Bad Request');
@@ -62,20 +69,20 @@ class React
     {
         $has_run = false;
         foreach ($this->config->map as $slug => $clone_url) {
-            if ($clone_url === $this->request->repository->clone_url) {
+            if ($clone_url === $this->request->cloneUrl()) {
                 $this->triggerGrunt($slug);
                 $has_run = true;
             }
         }
         //message about no support
         if ($has_run) {
-            $msg = 'The grunt tasks associated with ' . $this->request->repository->url . ' completed successfully.';
+            $msg = 'The grunt tasks associated with ' . $this->request->url() . ' completed successfully.';
             syslog(LOG_DEBUG, $msg);
             header('HTTP/1.1 200 OK');
             exit($msg);
 
         }
-        $msg = 'There are no grunt tasks associated with ' . $this->request->repository->url . '.';
+        $msg = 'There are no grunt tasks associated with ' . $this->request->url() . '.';
         syslog(LOG_DEBUG, $msg);
         header('HTTP/1.1 200 OK');
         exit($msg);
@@ -85,38 +92,21 @@ class React
     private function triggerGrunt($slug)
     {
         //if latest commit by EE DevBox server then do NOT run grunt
-        $i = 0;
-        $output = $output2 = '';
-
-        if (empty($this->request) || ! isset($this->request->commits)) {
-            $msg = 'No commits to process.  Looks like a bad package.';
+        if ($this->request->mostRecentCommitAuthorEmail() === $this->config->server_git_email) {
+            $msg = 'Most recent commit made by grunt so will not run recursively!';
             syslog(LOG_DEBUG, $msg);
-            header('HTTP/1.1 400 Bad Request');
+            header('HTTP/1.1 202 Accepted');
             exit($msg);
         }
 
-        foreach ($this->request->commits as $commit) {
-            //error_log( print_r( $commit, true ) );
-            if ($commit->author->email === $this->config->server_git_email && $i === 0) {
-                $msg = 'Most recent commit made by grunt so will not run recursively!';
-                syslog(LOG_DEBUG, $msg);
-                header('HTTP/1.1 202 Accepted');
-                exit($msg);
-            }
-            $i++;
-        }
-
-        //what branch are we going to checkout?
-        $ref = str_replace('refs/heads/', '', $this->request->ref);
-
         if ($this->canProcess($slug)) {
             $this->setProcessingLock($slug);
-            $this->doGrunt($slug, $ref);
+            $this->doGrunt($slug, $this->request->branch());
             $this->removeProcessingLock($slug);
         } else {
             $msg = "There is already a task for the $slug being processed.";
             syslog(LOG_DEBUG, $msg);
-            header('HTTP/1.1 409 Request Conflict');
+            header('HTTP/1.1 409 CodebaseRequest Conflict');
             exit($msg);
         }
     }
