@@ -3,6 +3,7 @@
  * Indicate what type of repository is sending the webhook.
  * Currently supports:
  * - codebase
+ * - github
  */
 $repository_type = 'codebase';
 

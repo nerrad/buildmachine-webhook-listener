@@ -31,6 +31,8 @@ class RequestFactory
         {
             case $type === self::REPOSITORY_TYPE_CODEBASE:
                 return new CodebaseRequest($request);
+            case $type === self::REPOSITORY_TYPE_GITHUB:
+                return new GithubRequest($request);
             default:
                 throw new InvalidArgumentException(
                     sprintf(
