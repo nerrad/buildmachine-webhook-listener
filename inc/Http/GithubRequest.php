@@ -57,8 +57,8 @@ class GithubRequest extends AbstractRequest
      */
     public function cloneUrl()
     {
-        return isset($this->payload->repository, $this->payload->repository->clone_url)
-            ? $this->payload->repository->clone_url
+        return isset($this->payload->repository, $this->payload->repository->ssh_url)
+            ? $this->payload->repository->ssh_url
             : '';
     }
 
@@ -69,8 +69,8 @@ class GithubRequest extends AbstractRequest
      */
     public function url()
     {
-        return isset($this->payload->repository, $this->payload->repository->url)
-            ? $this->payload->repository->url
+        return isset($this->payload->repository, $this->payload->repository->html_url)
+            ? $this->payload->repository->html_url
             : '';
     }
 
