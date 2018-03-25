@@ -22,7 +22,7 @@ class RequestFactory
 
     private static function detectRequestType()
     {
-        if (isset($_SEVER['HTTP_X_GITLAB_EVENT'])) {
+        if (isset($_SERVER['HTTP_X_GITLAB_EVENT'])) {
             return self::REPOSITORY_TYPE_GITLAB;
         }
         if (isset($_SERVER['HTTP_X_GITHUB_EVENT'])) {
