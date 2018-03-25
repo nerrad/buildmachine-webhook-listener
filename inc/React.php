@@ -122,6 +122,9 @@ class React
      */
     protected function canProcess($slug)
     {
+        if (! is_readable('.locks')) {
+            file_put_contents('.locks', json_encode(array()));
+        }
         $locks = json_decode(file_get_contents('.locks'));
         return ! isset($locks->{$slug});
     }
