@@ -9,9 +9,17 @@ abstract class AbstractRequest implements RequestInterface
      */
     private $request;
 
+
+    /**
+     * Incoming content type for request.
+     * @var string
+     */
+    private $content_type;
+
     public function __construct(array $request)
     {
         $this->request = $request;
+        $this->content_type = isset($_SERVER['CONTENT_TYPE']) ? trim($_SERVER['CONTENT_TYPE']) : '';
     }
 
 
@@ -30,8 +38,18 @@ abstract class AbstractRequest implements RequestInterface
      */
     public function token()
     {
-        return isset($this->_request['token'])
-            ? $this->_request['token']
+        return isset($this->request['token'])
+            ? $this->request['token']
             : '';
+    }
+
+
+    /**
+     * Determine if this request has a json body.
+     *
+     */
+    public function isJson()
+    {
+        return strcasecmp($this->content_type, 'application/json') === 0;
     }
 }

@@ -6,6 +6,7 @@ Webhook Connector between Repo and Grunt Build Machine
 **Currently Supports**
 - CodebaseHQ
 - Github
+- Gitlab
 
 ## Configuration
 - Clone this into a web accessible folder and run `composer install`.  
