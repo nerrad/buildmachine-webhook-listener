@@ -1,14 +1,5 @@
 <?php
 /**
- * Indicate what type of repository is sending the webhook.
- * Currently supports:
- * - codebase
- * - github
- */
-$repository_type = 'codebase';
-
-
-/**
  * This is used to indicate what email address is used by the git user that the grunt build machine makes commits with.
  *  This allows the webhook to detect the most recent commit and prevent recursive commits.
  *

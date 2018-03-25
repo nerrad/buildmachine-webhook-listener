@@ -1,6 +1,7 @@
 <?php
 namespace Nerrad\BuildMachine\WebHookListener\Http;
 
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -16,29 +17,41 @@ class RequestFactory
 
     const REPOSITORY_TYPE_GITHUB = 'github';
     const REPOSITORY_TYPE_CODEBASE = 'codebase';
+    const REPOSITORY_TYPE_GITLAB = 'gitlab';
+
+
+    private static function detectRequestType()
+    {
+        if (isset($_SEVER['HTTP_X_GITLAB_EVENT'])) {
+            return self::REPOSITORY_TYPE_GITLAB;
+        }
+        if (isset($_SERVER['HTTP_X_GITHUB_EVENT'])) {
+            return self::REPOSITORY_TYPE_GITHUB;
+        }
+        return self::REPOSITORY_TYPE_CODEBASE;
+    }
 
     /**
-     * Return instance of
+     * Return the request handler for the detected incoming request type.
      *
-     * @param array  $request
-     * @param string $type The type of repo to build the request object for.
+     * @param array $request
      * @return RequestInterface|null
      * @throws InvalidArgumentException
+     * @throws Exception
      */
-    public static function getRequestForRepositoryType(array $request, $type)
+    public static function getRequestForRepositoryType(array $request)
     {
-        switch ($type)
+        switch (self::detectRequestType())
         {
-            case $type === self::REPOSITORY_TYPE_CODEBASE:
+            case self::REPOSITORY_TYPE_CODEBASE:
                 return new CodebaseRequest($request);
-            case $type === self::REPOSITORY_TYPE_GITHUB:
+            case self::REPOSITORY_TYPE_GITHUB:
                 return new GithubRequest($request);
+            case self::REPOSITORY_TYPE_GITLAB:
+                return new GitlabRequest($request);
             default:
                 throw new InvalidArgumentException(
-                    sprintf(
-                        'The provided type (%s) is not a valid request type.',
-                        $type
-                    )
+                    'The incoming request type could not be detected.  Currently this webhook listener only supports Github, Gitlab, or CodebaseHQ webhooks.'
                 );
         }
     }
