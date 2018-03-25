@@ -164,10 +164,10 @@ class React
     {
         $output = $output2 = $sandbox_command = '';
         if ($ref === 'master') {
-            $bump_command = 'cd ' . $this->config->grunt_path . ' && grunt bumprc_' . $ref . ':' . $slug;
-            $sandbox_command = 'cd ' . $this->config->grunt_path . ' && grunt updateRemotes:' . $slug;
+            $bump_command = 'export PATH=$PATH:/usr/bin; cd ' . $this->config->grunt_path . ' && grunt bumprc_' . $ref . ':' . $slug;
+            $sandbox_command = 'export PATH=$PATH:/usr/bin; cd ' . $this->config->grunt_path . ' && grunt updateRemotes:' . $slug;
         } else {
-            $bump_command = 'cd ' . $this->config->grunt_path . ' && grunt githubsync:' . $slug . ':' . $ref;
+            $bump_command = 'export PATH=$PATH:/usr/bin; cd ' . $this->config->grunt_path . ' && grunt githubsync:' . $slug . ':' . $ref;
         }
         exec($bump_command, $output);
         syslog(LOG_DEBUG, print_r($output, true));
